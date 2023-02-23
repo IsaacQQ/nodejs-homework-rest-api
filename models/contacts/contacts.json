@@ -71,13 +71,5 @@
     "name": "hi",
     "email": "hi",
     "phone": "hi"
-  },
-  {
-    "id": "cc57ef05-83e4-4969-a1de-8e2c6a7b91e1",
-    "name": {
-      "name": "hi",
-      "email": "hi",
-      "phone": "hi"
-    }
   }
 ]
