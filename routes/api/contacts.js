@@ -84,8 +84,8 @@ router.put('/:contactId', async (req, res, next) => {
     if(error){
       throw HttpError(400,error.message);
     }
-    const {id} = req.params;
-    const result = await contacts.updateSourceFile(id, req.body);
+    const {contactId} = req.params;
+    const result = await contacts.updateContact(contactId, req.body);
     if(!result){
       throw HttpError(404, "Not found");
     }
