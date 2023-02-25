@@ -49,15 +49,16 @@ async function addContact(data) {
   }
 }
 
-async function removeContact(contactId) {
-  try {
-    const allContacts = await listContacts();
-    const changedCollection = allContacts.filter(({ id }) => id !== contactId);
-    updateContact(changedCollection);
-    return allContacts.filter(({ id }) => id === contactId);
-  } catch (error) {
-    console.log(error);
-  }
+async function removeContact(id) {
+  const contactId = String(id);
+    const contacts = await listContacts();
+    const index = contacts.findIndex(item => item.id === contactId);
+    if(index === -1){
+        return null;
+    }
+    const [result] = contacts.splice(index, 1);
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+    return result;
 }
 
 module.exports = {
