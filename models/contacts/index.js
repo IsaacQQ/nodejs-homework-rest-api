@@ -22,17 +22,17 @@ async function getContactById(contactId) {
   }
 }
 
-async function updateContact(id, data) {
-  const contactId = String(id);
-    const contacts = await listContacts();
-    const index = contacts.findIndex(item => item.id === contactId);
-    if(index === -1){
-        return null;
-    }
-    contacts[index] = {id, ...data};
-    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-    return contacts[index];
-}
+const updateContact = async (contactId, body) => {
+  const data = await listContacts();
+  const index = data.findIndex(item => item.id === contactId);
+  if (index === -1) {
+    return null;
+  }
+  const result = { ...data[index], ...body };
+  data.splice(index, 1);
+  fs.writeFile(contactsPath, JSON.stringify([...data, result]));
+  return result;
+};
 
 async function addContact(data) {
   try {

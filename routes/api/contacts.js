@@ -80,20 +80,27 @@ router.delete('/:contactId', async (req, res, next) => {
 
 router.put('/:contactId', async (req, res, next) => {
   try {
-    const {error} = addSchema.validate(req.body);
-    if(error){
-      throw HttpError(400,error.message);
+    const { contactId } = req.params;
+    const { name, email, phone } = req.body;
+    if (!name && !email && !phone) {
+      const error = new Error('missing fields');
+      error.status = 400;
+      throw error;
     }
-    const {contactId} = req.params;
     const result = await contacts.updateContact(contactId, req.body);
-    if(!result){
-      throw HttpError(404, "Not found");
+    if (!result) {
+      const error = new Error('Not found');
+      error.status = 404;
+      throw error;
     }
-    res.json(result)
+    res.status(200).json({
+      status: 'success',
+      code: 201,
+      data: { result },
+    });
+  } catch (error) {
+    next(error);
   }
-  catch(error) {
-    next(error)
-  }
-})
+});
 
 module.exports = router
