@@ -1,17 +1,15 @@
 const express = require('express')
 const logger = require('morgan')
 const cors = require('cors')
-
 const contactsRouter = require('./routes/api/contacts')
-
 const app = express()
-
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
-
+require("dotenv").config();
 // const contacts = require("./models/contacts.json")
 // app.get("/contacts", (req, res)=>{
 // res.send(contacts)
 // })
+
 
 
 
