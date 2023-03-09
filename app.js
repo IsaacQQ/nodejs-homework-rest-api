@@ -5,10 +5,8 @@ const contactsRouter = require('./routes/api/contacts')
 const app = express()
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
 require("dotenv").config();
-// const contacts = require("./models/contacts.json")
-// app.get("/contacts", (req, res)=>{
-// res.send(contacts)
-// })
+
+const authRouter = require("./routes/api/auth")
 
 
 
@@ -19,6 +17,7 @@ app.use(logger(formatsLogger))
 app.use(cors())
 app.use(express.json())
 
+app.use("/api/auth", authRouter)
 app.use('/api/contacts', contactsRouter)
 
 
