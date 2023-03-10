@@ -1,5 +1,5 @@
 const {HttpError, ctrlWrapper} = require("../helpers");
-const contact = require("../models/contact")
+const {Contact} = require("../models/contact")
 
 
 
@@ -14,14 +14,17 @@ const contact = require("../models/contact")
 
 
   const listContacts = async (req, res, next) => {
-      const result = await contact.find();
-      res.json(result);  
+      const {_id: owner} = req.user;
+    const {page = 1, limit = 10} = req.query;
+    const skip = (page - 1) * limit;
+    const result = await Contact.find({owner}, "-createdAt -updatedAt", {skip, limit}).populate("owner", "name email");
+    res.json(result); 
   }
 
 
   const getContactById = async (req, res, next) => {
-        const {contactId} = req.params
-        const result = await contact.findById(contactId)
+        const { contactId } = req.params;
+        const result = await Contact.findById(contactId)
         if (!result) {
           throw HttpError(404, "Not found")
         }
@@ -30,13 +33,14 @@ const contact = require("../models/contact")
     
 
   const addContact = async (req, res, next) => {
-       const result = await contact.create(req.body);
+      const {id: owner} = req.user;
+       const result = await Contact.create({...req.body, owner}, "-createdAt -updatedAt").populate("owner", "name email");
        res.status(201).json(result);
    }
 
    const removeContact = async (req, res, next) => {
       const {contactId} = req.params;
-      const result = await contact.findByIdAndDelete(contactId)
+      const result = await Contact.findByIdAndDelete(contactId)
       if (!result) {
         throw HttpError(404, "Not found")
       }
@@ -48,7 +52,7 @@ const contact = require("../models/contact")
 
    const updateFavorite = async (req, res) =>{
       const {contactId} = req.params;
-      const result = await contact.findByIdAndUpdate(contactId, req.body, {new: true});
+      const result = await Contact.findByIdAndUpdate(contactId, req.body, {new: true});
       if (!result) {
         throw HttpError(404, "Not found");
       }
@@ -63,7 +67,7 @@ const contact = require("../models/contact")
         error.status = 400;
         throw error;
       }
-      const result = await contact.findByIdAndUpdate(contactId, req.body, {new: true});
+      const result = await Contact.findByIdAndUpdate(contactId, req.body, {new: true});
       if (!result) {
         const error = new Error('Not found');
         error.status = 404;
