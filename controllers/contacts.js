@@ -42,45 +42,57 @@ const {Contact} = require("../models/contact")
    }
 
    const removeContact = async (req, res, next) => {
-      const {contactId} = req.params;
-      const result = await Contact.findByIdAndDelete(contactId)
-      if (!result) {
-        throw HttpError(404, "Not found")
-      }
-      res.json({
-        message: "Object Deleted"
-      })
+    const { _id } = req.user;
+    const { contactId } = req.params;
+    const contact = await Contact.deleteOne({ _id: contactId, owner: _id });
+    if (!contact) {
+      throw HttpError(404, 'Not found');
+    }
+    res.status(200).json({
+      status: 'success',
+      code: 200,
+      message: 'contact deleted',
+      data: contact,
+    });
   }
 
 
    const updateFavorite = async (req, res) =>{
-      const {contactId} = req.params;
-      const result = await Contact.findByIdAndUpdate(contactId, req.body, {new: true});
-      if (!result) {
-        throw HttpError(404, "Not found");
-      }
-      res.json(result);
+    const { _id } = req.user;
+    const { contactId } = req.params;
+    if (Object.keys(req.body).length === 0) {
+      throw HttpError(400, 'missing fields favorite');
+    }
+    const result = await Contact.findOne({ _id: contactId, owner: _id });
+    if (!result) {
+      throw HttpError(404, 'Not found');
+    }
+    await Contact.updateOne({ _id: contactId, owner: _id }, { $set: req.body });
+  
+    res.status(200).json({
+      status: 'success',
+      code: 201,
+      data: { result },
+    });
    }
 
   const updateContact = async (req, res, next) => {
-      const { contactId } = req.params;
-      const { name, email, phone } = req.body;
-      if (!name && !email && !phone) {
-        const error = new Error('missing fields');
-        error.status = 400;
-        throw error;
-      }
-      const result = await Contact.findByIdAndUpdate(contactId, req.body, {new: true});
-      if (!result) {
-        const error = new Error('Not found');
-        error.status = 404;
-        throw error;
-      }
-      res.status(200).json({
-        status: 'success',
-        code: 201,
-        data: { result },
-      });
+    const { _id } = req.user;
+    const { contactId } = req.params;
+    if (Object.keys(req.body).length === 0) {
+      throw HttpError(400, 'missing fields');
+    }
+    const result = await Contact.findOne({ _id: contactId, owner: _id });
+    if (!result) {
+      throw HttpError(404, 'Not found');
+    }
+    await Contact.updateOne({ _id: contactId, owner: _id }, { $set: req.body });
+  
+    res.status(200).json({
+      status: 'success',
+      code: 201,
+      data: { result },
+    });
   }
 
   module.exports = {
