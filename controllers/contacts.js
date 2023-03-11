@@ -60,9 +60,6 @@ const {Contact} = require("../models/contact")
    const updateFavorite = async (req, res) =>{
     const { _id } = req.user;
     const { contactId } = req.params;
-    if (Object.keys(req.body).length === 0) {
-      throw HttpError(400, 'missing fields favorite');
-    }
     const result = await Contact.findOne({ _id: contactId, owner: _id });
     if (!result) {
       throw HttpError(404, 'Not found');
