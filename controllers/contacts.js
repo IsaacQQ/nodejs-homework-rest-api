@@ -60,12 +60,10 @@ const {Contact} = require("../models/contact")
    const updateFavorite = async (req, res) =>{
     const { _id } = req.user;
     const { contactId } = req.params;
-    const result = await Contact.findOne({ _id: contactId, owner: _id });
+    const result = await Contact.findOneAndUpdate({ _id: contactId, owner: _id }, { $set: req.body });
     if (!result) {
       throw HttpError(404, 'Not found');
     }
-    await Contact.updateOne({ _id: contactId, owner: _id }, { $set: req.body });
-  
     res.status(200).json({
       status: 'success',
       code: 201,
@@ -83,7 +81,6 @@ const {Contact} = require("../models/contact")
     if (!result) {
       throw HttpError(404, 'Not found');
     }
-
     res.status(200).json({
       status: 'success',
       code: 201,
