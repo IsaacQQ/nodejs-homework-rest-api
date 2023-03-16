@@ -3,9 +3,10 @@ const jwt = require("jsonwebtoken");
 const {User} = require("../models/user");
 
 const {HttpError} = require("../helpers");
+require('dotenv').config();
+// const {SECRET_KEY} = require("../nodemon.json")
+const {SECRET_KEY} = process.env;
 
-const {SECRET_KEY} = require("../nodemon.json")
-// const {SECRET_KEY} = process.env;
 
 const authenticate = async (req, res, next) => {
     const {authorization = ""} = req.headers;
